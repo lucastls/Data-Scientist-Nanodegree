@@ -1,0 +1,151 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+TÍTULO por SEU_NOME_AQUI
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Carregue aqui todos os pacotes utilizados 
+# na sua análise realizada neste arquivo fonte.
+
+# Note que o parâmetro "echo" foi definido como FALSE neste código.
+# Isso previne que o código apresente resultados formatados em HTML.
+# Você deve definir echo=FALSE para todos os blocos de código no seu arquivo.
+
+library(ggplot2)
+library(GGally)
+library(dplyr)
+library(purrr)
+library(corrplot)
+library(gridExtra)
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Carregamento dos dados
+df <- read.csv("wineQualityReds.csv")
+```
+
+```{r echo=FALSE, Data}
+head(df)
+```
+
+```{r echo=FALSE, Data_Summary}
+df <- subset(df, select=-c(X))
+summary(df)
+```
+
+# Seção de Gráficos Univariados
+
+```{r echo=FALSE, Univariate_Plots_BoxPlot}
+quality_hist <- ggplot(data = df, aes(quality)) + stat_count()
+
+plot1 <- ggplot(aes(x=factor(0), y=alcohol, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot2 <- ggplot(aes(x=factor(0), y=fixed.acidity, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot3 <- ggplot(aes(x=factor(0), y=volatile.acidity, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot4 <- ggplot(aes(x=factor(0), y=citric.acid, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot5 <- ggplot(aes(x=factor(0), y=pH, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot6 <- ggplot(aes(x=factor(0), y=residual.sugar, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot7 <- ggplot(aes(x=factor(0), y=density, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, quality_hist, ncol = 4)
+```
+```{r echo=FALSE, Univariate_Plots_ScatterPlot}
+pairs(df, lower.panel = NULL)
+```
+
+
+# Análise Univariada
+
+### Qual é a estrutura do conjunto de dados?
+
+O conjunto de dados é formado por 12 variáveis numéricas, elas são: fixed.acidity, volatile.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density pH, sulphates, alcohol e quality   
+
+### Quais são os principais atributos de interesse deste conjunto de dados?
+
+Os principais atributos de interesse são aqueles relacionado a acidez
+
+### Quais outros atributos você acha que podem lhe auxiliar na investigação destes atributos de interesse?
+
+### Você criou novas variáveis a partir dos atributos existentes no conjunto de dados?
+
+### Dos atributos investigados, distribuições incomuns foram encontradas? Você aplicou operações nos dados para limpá-los, ajustá-los ou mudar a forma dos dados? Se sim, por quê?
+
+# Seção de Gráficos Bivariados
+#```{r echo=FALSE, Bivariate_Plots}
+#df %>%
+#select(fixed.acidity, volatile.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH) %>%
+#ggpairs()
+#res <- cor(my_data)
+#round(res, 2)
+#```
+```{r echo=FALSE, Bivariate_Plots}
+df_corr <- cor(df)
+corrplot(df_corr, type = "upper", order = "hclust", 
+         tl.col = "black", tl.srt = 45, title="Correlação", mar=c(0,0,1,0))
+```
+
+# Análise Bivariada
+
+### Discuta sobre alguns dos relacionamentos observados nesta parte da investigação. Como os atributos de interesse variaram no conjunto de dados?
+
+### Você observou algum relacionamento interessante entre os outros atributos (os que não são de interesse)?
+
+### Qual foi o relacionamento mais forte encontrado?
+
+
+
+
+# Seção de Gráficos Multivariados
+
+```{r echo=FALSE, Multivariate_Plots}
+
+```
+
+# Análise Multivariada
+
+### Discuta sobre os relacionamentos observados nesta parte da investigação. Quais atributos que fortaleceram os demais na observação das variáveis de interesse?
+
+### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos?
+
+### OPCIONAL: Modelos foram criados usando este conjunto de dados? Discuta sobre os pontos fortes e as limitações do seu modelo.
+
+------
+
+# Gráficos Finais e Sumário
+
+### Primeiro Gráfico
+```{r echo=FALSE, Plot_One}
+
+```
+
+### Descrição do Primeiro Gráfico
+
+
+### Segundo Gráfico
+```{r echo=FALSE, Plot_Two}
+
+```
+
+### Descrição do Segundo Gráfico
+
+
+### Terceiro Gráfico
+```{r echo=FALSE, Plot_Three}
+
+```
+
+### Descrição do Terceiro Gráfico
+
+------
+
+# Reflexão
+
+
