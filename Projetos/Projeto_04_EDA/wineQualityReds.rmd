@@ -1,0 +1,202 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+Análise de Qualidade de Vinhos Tintos por Lucas   Santos
+========================================================
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Carregue aqui todos os pacotes utilizados 
+# na sua análise realizada neste arquivo fonte.
+
+# Note que o parâmetro "echo" foi definido como FALSE neste código.
+# Isso previne que o código apresente resultados formatados em HTML.
+# Você deve definir echo=FALSE para todos os blocos de código no seu arquivo.
+
+library(ggplot2)
+library(GGally)
+library(dplyr)
+library(purrr)
+library(corrplot)
+library(gridExtra)
+```
+
+# Carregamento dos dados
+
+```{r echo=FALSE, Load_the_Data}
+df <- read.csv("wineQualityReds.csv")
+```
+
+```{r echo=FALSE, Data}
+head(df)
+```
+
+```{r echo=FALSE, Data_Summary}
+df <- subset(df, select=-c(X))
+summary(df)
+```
+
+# Seção de Gráficos Univariados
+
+```{r echo=FALSE, dpi=72, Univariate_Plots_BoxPlot}
+quality_hist <- ggplot(data = df, aes(quality)) + stat_count()
+
+plot1 <- ggplot(aes(x=factor(0), y=alcohol, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot2 <- ggplot(aes(x=factor(0), y=fixed.acidity, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot3 <- ggplot(aes(x=factor(0), y=volatile.acidity, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot4 <- ggplot(aes(x=factor(0), y=citric.acid, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot5 <- ggplot(aes(x=factor(0), y=pH, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot6 <- ggplot(aes(x=factor(0), y=residual.sugar, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+plot7 <- ggplot(aes(x=factor(0), y=density, group=1), data=df) + geom_boxplot() + theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+quality_hist
+plot1
+plot2
+plot3
+plot4
+plot5
+plot6
+plot7
+```
+
+# Análise Univariada
+
+
+### Qual é a estrutura do conjunto de dados?
+
+O conjunto de dados é formado por 12 variáveis numéricas, elas são: fixed.acidity, volatile.acidity, citric.acid, residual.sugar, chlorides, free.sulfur.dioxide, total.sulfur.dioxide, density, pH, sulphates, alcohol e quality   
+
+### Quais são os principais atributos de interesse deste conjunto de dados?
+
+O principal atributo de interesse destes dados é o quality, que é a nota dada devida a qualidade do vinho. Os atributos mais relevantes para isso são os relacionados ao sabor, como o teor alcoolico, a acidez, o douçor e a densidade.
+
+### Quais outros atributos você acha que podem lhe auxiliar na investigação destes atributos de interesse?
+
+Os principais atributos de interesse são aqueles relacionado a acidez; fixed.acidity, volatile.acidity, citric.acid e pH além dos atributos residual.sugar, density e alcohol.
+
+### Você criou novas variáveis a partir dos atributos existentes no conjunto de dados?
+
+Novas variáveis não foram criadas.
+
+### Dos atributos investigados, distribuições incomuns foram encontradas? Você aplicou operações nos dados para limpá-los, ajustá-los ou mudar a forma dos dados? Se sim, por quê?
+
+Como essa é uma análise exploratória dos dados nenhuma operação de limpeza ou ajuste dos dados foi realizada, porém para fazer classificações ou predições essas operações seriam feitas.
+
+# Seção de Gráficos Bivariados
+
+```{r echo=FALSE,fig.width = 15, fig.height = 12, dpi=300, Univariate_Plots_ScatterPlot}
+ggpairs(df, progress=FALSE)
+```
+
+```{r echo=FALSE, Bivariate_Plots_Corr_Matrix}
+res <- cor(df)
+round(res,2)
+```
+```{r echo=FALSE, Bivariate_Plots_Corr_Graph}
+df_corr <- cor(df)
+corrplot(df_corr, type = "full", order = "hclust", 
+         tl.col = "black", tl.srt = 45)
+```
+# Análise Bivariada
+
+### Discuta sobre alguns dos relacionamentos observados nesta parte da investigação. Como os atributos de interesse variaram no conjunto de dados?
+
+Os atributos de interesse que mais se relacionam com a qualidade do vinho são: 
+
+- alcohol (0,48)
+- volatile.acidity (-0,39)
+- citric.acid (0,23)
+
+AS carceterisitcas de interesse possuem distribuições do tipo assimétrica e normal. Os que possuem distribuição não normal ela é do tipo assimétrica positiva.
+
+### Você observou algum relacionamento interessante entre os outros atributos (os que não são de interesse)?
+
+Chlorides possui uma correlação de 0,37 com sulphates. E free.sulfur.dioxide possui uma correlação de 0.67 com total.sulfur.dioxide
+
+### Qual foi o relacionamento mais forte encontrado?
+
+O relacionamento encontrado mais forte é o de fixed.acidity com pH. Eles possuem uma correlação de -0,68.
+
+# Seção de Gráficos Multivariados
+
+```{r echo=FALSE, Multivariate_Plots}
+ggplot(df, aes(x=alcohol, y=residual.sugar,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+ggplot(df, aes(x=alcohol, y=fixed.acidity,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+ggplot(df, aes(x=alcohol, y=citric.acid,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+ggplot(df, aes(x=alcohol, y=volatile.acidity,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+ggplot(df, aes(x=alcohol, y=pH,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+
+ggplot(df, aes(x=alcohol, y=density,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+
+ggplot(df, aes(x=volatile.acidity, y=sulphates,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+
+ggplot(df, aes(x=fixed.acidity, y=citric.acid,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4)
+```
+
+# Análise Multivariada
+
+### Discuta sobre os relacionamentos observados nesta parte da investigação. Quais atributos que fortaleceram os demais na observação das variáveis de interesse?
+
+A fixed.acidity, citric.acid são linearmente e diretamente proporciais porém não há uma relação clara com a qualidade do vinho. 
+
+Residual.sugar e alcohol, apesar da relação entre eles ser pouco significativa quanto maior o teor alcoolico e na faixa entre 2 g/dm³ e 4 g/dm³ os vinhos são melhores.
+
+Outros atributos também se correlacionam porém são inversamente proporcionais como alcohol e density entretanto a qualidade do vinho cresce a medida que a densidade diminui e o teor de álcool cresce.
+
+Em relação a volatile.acidity e sulphates quanto menores suas concentrações melhor é o vinho
+
+### Interações surpreendentes e/ou interessantes foram encontradas entre os atributos?
+
+Alguns atributos não possuem relações tão claras como é o caso do alcohol e citric.acid, fixed.acidity e alcohol, volatile.acidity e alcohol e pH e alcohol em que os dados são dispersos mesmo levando em consideração a qualidade.
+
+------
+
+# Gráficos Finais e Sumário
+
+### Primeiro Gráfico
+```{r echo=FALSE, Plot_One}
+corrplot(df_corr, type = "full", order = "hclust", 
+         tl.col = "black", tl.srt = 45, title="Correlação dos Atributos", mar=c(0,0,1,0))
+```
+
+### Descrição do Primeiro Gráfico
+ Este gráfico mostra a correlação entre os atributos do conjunto de dados de maneira bem visual e intuitiva. Nele é possível visualizar rapidamente quais as caracteristicas dos vinhos que mais se correlatam.
+
+### Segundo Gráfico
+```{r echo=FALSE, Plot_Two}
+ggplot(df, aes(x=alcohol, y=density,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4) + ggtitle("Correlação entre Álcool e Densidade") +xlab("Álcool (% por volume)") +ylab("Densidade (g/cm³)") + theme(plot.title = element_text(hjust = 0.5)) + labs(color = "Qualidade")
+```
+
+### Descrição do Segundo Gráfico
+ Esse gráfico mostra a correlação entre Densidade (density) e Álcool  (alcohol) levando em consideração a qualidade do vinho (quality). O teor alcoolico é um dos atributos que mais possui correlação com a qualidade do vinho, e a densidade é o atributo que mais correlata com o teor alcolico. 
+ 
+ Como pode ser visto no gráfico, é uma relação que possui uma lineraidade e os vinhos melhores possuem um teor alcoolico entre 11% e 14% e uma densidade entre 0,9925 g/cm³ e 1 g/cm³.
+ 
+### Terceiro Gráfico
+```{r echo=FALSE, Plot_Three}
+ggplot(df, aes(x=fixed.acidity, y=citric.acid,colour=factor(quality), show.legend=TRUE)) + geom_point(alpha = 0.4) + ggtitle("Correlação entre Acidez fixa e Acidez cítrica") +xlab("Ácido tartárico (g/dm³)") +ylab("Ácido cítrico (g/dm³)") + theme(plot.title = element_text(hjust = 0.5)) + labs(color = "Qualidade")
+```
+
+### Descrição do Terceiro Gráfico
+
+ Esse gráfico mostra a correlação entre Ácido cítrico (citric.acid) e Ácido tartárico  (fixed.acidity) levando em consideração a qualidade do vinho (quality). O ácido cítrico é um dos atributos que mais possui correlação com a qualidade do vinho, e o ácido tartárico é o atributo que mais correlata com o ácido cítrico. 
+ 
+ Como pode ser visto no gráfico, é uma relação que possui uma lineraidade, porém os vinhos com uma maior qualidade não se concentram em uma parte do gráfico.
+------
+
+# Reflexão
+
+O conjunto de dados de vinhos tintos possui 1599 análises, com onze atributos das características químicas do vinho. Comecei primeiramente explorando a dispersão dos atributos de maneira individual. Posteriormente foram feitas análises e gráficos analisando as variáveis de forma conjunta. 
+
+Algumas características impactam a qualidde do vinho, positivamente ou negativamente de maneira muito significativa, como o teor alcoolico, o ácido cítrico e o ácido acético. Entre essas características somente o ácido acético impacta negativamente a qualidade do vinho.
+
+Uma surpresa ao analisar os dados foi descobrir que a quantidade de açúcar residual afeta muito pouco a qualidade do vinho, possuindo uma correlação de somente 0,01.
+
+Os atributos dos dados possuem correlações entre si, e os dados são desbalanceados possuindo muito mais vinhos com notas medianas do que notas ruins ou ótimas. Portanto para uma predição ou classificação seria necessário tratar essas questões.
